@@ -50,8 +50,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             type=user_type,
         )
 
-        return user
-    
+        return user   
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
@@ -73,3 +72,118 @@ class LoginSerializer(serializers.Serializer):
         attrs["user"] = user
 
         return attrs
+
+class ProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(
+        source="user.username",
+        read_only=True,
+    )
+    first_name = serializers.CharField(
+        source="user.first_name",
+        required=False,
+    )
+    last_name = serializers.CharField(
+        source="user.last_name",
+        required=False,
+    )
+    email = serializers.EmailField(
+        source="user.email",
+        required=False,
+    )
+
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop("user", {})
+
+        user = instance.user
+
+        for field, value in user_data.items():
+            setattr(user, field, value)
+
+        if user_data:
+            user.save(update_fields=list(user_data.keys()))
+
+        return super().update(instance, validated_data)
+
+    class Meta:
+        model = Profile
+        fields = [
+            "user",
+            "username",
+            "first_name",
+            "last_name",
+            "file",
+            "location",
+            "tel",
+            "description",
+            "working_hours",
+            "type",
+            "email",
+            "created_at",
+        ]
+
+        read_only_fields = [
+            "user",
+            "username",
+            "type",
+            "created_at",
+        ]
+
+class BusinessProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(
+        source="user.username",
+        read_only=True,
+    )
+    first_name = serializers.CharField(
+        source="user.first_name",
+        read_only=True,
+    )
+    last_name = serializers.CharField(
+        source="user.last_name",
+        read_only=True,
+    )
+
+    class Meta:
+        model = Profile
+        fields = [
+            "user",
+            "username",
+            "first_name",
+            "last_name",
+            "file",
+            "location",
+            "tel",
+            "description",
+            "working_hours",
+            "type",
+        ]
+
+
+class CustomerProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(
+        source="user.username",
+        read_only=True,
+    )
+    first_name = serializers.CharField(
+        source="user.first_name",
+        read_only=True,
+    )
+    last_name = serializers.CharField(
+        source="user.last_name",
+        read_only=True,
+    )
+    uploaded_at = serializers.DateTimeField(
+        source="created_at",
+        read_only=True,
+    )
+
+    class Meta:
+        model = Profile
+        fields = [
+            "user",
+            "username",
+            "first_name",
+            "last_name",
+            "file",
+            "uploaded_at",
+            "type",
+        ]
