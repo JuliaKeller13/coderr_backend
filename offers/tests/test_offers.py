@@ -64,6 +64,17 @@ class OfferAPITests(APITestCase):
             ],
         }
 
+    def create_offer(self):
+        self.client.force_authenticate(
+            user=self.business_user
+        )
+
+        return self.client.post(
+            "/api/offers/",
+            self.offer_data,
+            format="json",
+        )
+
     def test_business_user_can_create_offer(self):
         self.client.force_authenticate(
             user=self.business_user
@@ -191,4 +202,93 @@ class OfferAPITests(APITestCase):
         self.assertEqual(
             offer["min_delivery_time"],
             1,
+        )
+
+    def test_filter_by_creator_id(self):
+        self.create_offer()
+
+        self.client.force_authenticate(user=None)
+
+        response = self.client.get(
+            f"/api/offers/?creator_id={self.business_user.id}"
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
+        self.assertEqual(
+            response.data["count"],
+            1,
+        )
+
+
+    def test_filter_by_min_price(self):
+        self.create_offer()
+
+        self.client.force_authenticate(user=None)
+
+        response = self.client.get(
+            "/api/offers/?min_price=100"
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
+        self.assertEqual(
+            response.data["count"],
+            1,
+        )
+
+    def test_filter_by_max_delivery_time(self):
+        self.create_offer()
+
+        self.client.force_authenticate(user=None)
+
+        response = self.client.get(
+            "/api/offers/?max_delivery_time=5"
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
+        self.assertEqual(
+            response.data["count"],
+            1,
+        )
+
+
+    def test_search_offers(self):
+        self.create_offer()
+
+        self.client.force_authenticate(user=None)
+
+        response = self.client.get(
+            "/api/offers/?search=Grafikdesign"
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
+        self.assertEqual(
+            response.data["count"],
+            1,
+        )
+
+
+    def test_ordering_by_min_price(self):
+        self.create_offer()
+
+        self.client.force_authenticate(user=None)
+
+        response = self.client.get(
+            "/api/offers/?ordering=min_price"
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
         )

@@ -1,8 +1,10 @@
 from django.db.models import Min
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
+from rest_framework.filters import OrderingFilter, SearchFilter
 
 from offers.models import Offer, OfferDetail
-
+from .filters import OfferFilter
 from .pagination import OfferPagination
 from .permissions import IsBusinessUser
 from .serializers import (
@@ -33,6 +35,28 @@ class OfferListCreateView(generics.ListCreateAPIView):
 class OfferListCreateView(generics.ListCreateAPIView):
     pagination_class = OfferPagination
 
+    filter_backends = [
+        DjangoFilterBackend,
+        SearchFilter,
+        OrderingFilter,
+    ]
+
+    filterset_class = OfferFilter
+
+    search_fields = [
+        "title",
+        "description",
+    ]
+
+    ordering_fields = [
+        "updated_at",
+        "min_price",
+    ]
+
+    ordering = [
+        "-updated_at",
+    ]
+
     def get_queryset(self):
         return (
             Offer.objects
@@ -44,7 +68,6 @@ class OfferListCreateView(generics.ListCreateAPIView):
                     "details__delivery_time_in_days"
                 ),
             )
-            .order_by("-updated_at")
         )
 
     def get_serializer_class(self):
