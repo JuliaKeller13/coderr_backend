@@ -132,3 +132,63 @@ class OfferAPITests(APITestCase):
             "results",
             response.data,
         )
+
+    def test_offer_list_contains_expected_fields(self):
+        self.client.force_authenticate(
+            user=self.business_user
+        )
+
+        create_response = self.client.post(
+            "/api/offers/",
+            self.offer_data,
+            format="json",
+        )
+
+        self.client.force_authenticate(user=None)
+
+        response = self.client.get(
+            "/api/offers/"
+        )
+
+        offer = response.data["results"][0]
+
+        self.assertIn("id", offer)
+        self.assertIn("user", offer)
+        self.assertIn("title", offer)
+        self.assertIn("image", offer)
+        self.assertIn("description", offer)
+        self.assertIn("created_at", offer)
+        self.assertIn("updated_at", offer)
+        self.assertIn("details", offer)
+        self.assertIn("min_price", offer)
+        self.assertIn("min_delivery_time", offer)
+        self.assertIn("user_details", offer)
+
+    def test_offer_list_returns_min_price_and_delivery_time(self):
+        self.client.force_authenticate(
+            user=self.business_user
+        )
+
+        self.client.post(
+            "/api/offers/",
+            self.offer_data,
+            format="json",
+        )
+
+        self.client.force_authenticate(user=None)
+
+        response = self.client.get(
+            "/api/offers/"
+        )
+
+        offer = response.data["results"][0]
+
+        self.assertEqual(
+            offer["min_price"],
+            100.0,
+        )
+
+        self.assertEqual(
+            offer["min_delivery_time"],
+            1,
+        )
