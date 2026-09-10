@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from offers.models import Offer
 from users.models import Profile
 
 
@@ -291,4 +292,140 @@ class OfferAPITests(APITestCase):
         self.assertEqual(
             response.status_code,
             status.HTTP_200_OK,
+        )
+
+    def test_authenticated_user_can_retrieve_offer(self):
+        create_response = self.create_offer()
+        offer_id = create_response.data["id"]
+
+        response = self.client.get(
+            f"/api/offers/{offer_id}/"
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
+
+        self.assertEqual(
+            response.data["id"],
+            offer_id,
+        )
+
+        self.assertEqual(
+            response.data["title"],
+            "Grafikdesign-Paket",
+        )
+
+        self.assertIn(
+            "details",
+            response.data,
+        )
+
+        self.assertIn(
+            "min_price",
+            response.data,
+        )
+
+        self.assertIn(
+            "min_delivery_time",
+            response.data,
+        )
+
+    def test_unauthenticated_user_cannot_retrieve_offer(self):
+        create_response = self.create_offer()
+        offer_id = create_response.data["id"]
+
+        self.client.force_authenticate(user=None)
+
+        response = self.client.get(
+            f"/api/offers/{offer_id}/"
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_401_UNAUTHORIZED,
+        )
+
+
+    def test_owner_can_patch_offer(self):
+        create_response = self.create_offer()
+        offer_id = create_response.data["id"]
+
+        response = self.client.patch(
+            f"/api/offers/{offer_id}/",
+            {
+                "title": "Updated Grafikdesign-Paket",
+                "details": [
+                    {
+                        "offer_type": "basic",
+                        "title": "Basic Updated",
+                        "price": "120.00",
+                        "revisions": 3,
+                        "delivery_time_in_days": 4,
+                        "features": ["Logo", "PNG"],
+                    }
+                ],
+            },
+            format="json",
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
+
+        self.assertEqual(
+            response.data["title"],
+            "Updated Grafikdesign-Paket",
+        )
+
+    def test_non_owner_cannot_patch_offer(self):
+        create_response = self.create_offer()
+        offer_id = create_response.data["id"]
+
+        other_user = User.objects.create_user(
+            username="otherbusiness",
+            password="testpassword",
+        )
+
+        Profile.objects.create(
+            user=other_user,
+            type=Profile.UserType.BUSINESS,
+        )
+
+        self.client.force_authenticate(
+            user=other_user
+        )
+
+        response = self.client.patch(
+            f"/api/offers/{offer_id}/",
+            {
+                "title": "Forbidden Update",
+            },
+            format="json",
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_403_FORBIDDEN,
+        )
+
+    def test_owner_can_delete_offer(self):
+        create_response = self.create_offer()
+        offer_id = create_response.data["id"]
+
+        response = self.client.delete(
+            f"/api/offers/{offer_id}/"
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_204_NO_CONTENT,
+        )
+
+        self.assertFalse(
+            Offer.objects.filter(
+                pk=offer_id
+            ).exists()
         )

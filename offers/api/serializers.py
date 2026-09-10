@@ -67,26 +67,27 @@ class OfferWriteSerializer(serializers.ModelSerializer):
         ]
 
     def validate_details(self, details):
-        required_types = {
-            OfferDetail.OfferType.BASIC,
-            OfferDetail.OfferType.STANDARD,
-            OfferDetail.OfferType.PREMIUM,
-        }
+        if self.instance is None:
+            required_types = {
+                OfferDetail.OfferType.BASIC,
+                OfferDetail.OfferType.STANDARD,
+                OfferDetail.OfferType.PREMIUM,
+            }
 
-        offer_types = {
-            detail["offer_type"]
-            for detail in details
-        }
+            offer_types = {
+                detail["offer_type"]
+                for detail in details
+            }
 
-        if len(details) != 3:
-            raise serializers.ValidationError(
-                "An offer must contain exactly three details."
-            )
+            if len(details) != 3:
+                raise serializers.ValidationError(
+                    "An offer must contain exactly three details."
+                )
 
-        if offer_types != required_types:
-            raise serializers.ValidationError(
-                "Details must contain basic, standard and premium."
-            )
+            if offer_types != required_types:
+                raise serializers.ValidationError(
+                    "Details must contain basic, standard and premium."
+                )
 
         return details
 
@@ -106,6 +107,53 @@ class OfferWriteSerializer(serializers.ModelSerializer):
             )
 
         return offer
+
+    def update(self, instance, validated_data):
+        details_data = validated_data.pop(
+            "details",
+            None,
+        )
+
+        instance = super().update(
+            instance,
+            validated_data,
+        )
+
+        if details_data is not None:
+            existing_details = {
+                detail.offer_type: detail
+                for detail in instance.details.all()
+            }
+
+            for detail_data in details_data:
+                offer_type = detail_data.pop(
+                    "offer_type"
+                )
+
+                detail = existing_details.get(
+                    offer_type
+                )
+
+                if detail is None:
+                    raise serializers.ValidationError(
+                        {
+                            "details": (
+                                f"No detail with offer_type "
+                                f"'{offer_type}' exists."
+                            )
+                        }
+                    )
+
+                for field, value in detail_data.items():
+                    setattr(
+                        detail,
+                        field,
+                        value,
+                    )
+
+                detail.save()
+
+        return instance
 
 
 class OfferListSerializer(serializers.ModelSerializer):
@@ -167,3 +215,61 @@ class OfferListSerializer(serializers.ModelSerializer):
             "last_name": obj.user.last_name,
             "username": obj.user.username,
         }
+
+
+class OfferDetailViewSerializer(serializers.ModelSerializer):
+    details = OfferDetailReferenceSerializer(
+        many=True,
+        read_only=True,
+    )
+
+    min_price = serializers.SerializerMethodField()
+    min_delivery_time = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Offer
+        fields = [
+            "id",
+            "user",
+            "title",
+            "image",
+            "description",
+            "created_at",
+            "updated_at",
+            "details",
+            "min_price",
+            "min_delivery_time",
+        ]
+
+    def get_min_price(self, obj):
+        value = getattr(
+            obj,
+            "min_price",
+            None,
+        )
+
+        if value is None:
+            value = obj.details.aggregate(
+                minimum=Min("price")
+            )["minimum"]
+
+        if value is None:
+            return None
+
+        return float(value)
+
+    def get_min_delivery_time(self, obj):
+        value = getattr(
+            obj,
+            "min_delivery_time",
+            None,
+        )
+
+        if value is None:
+            value = obj.details.aggregate(
+                minimum=Min(
+                    "delivery_time_in_days"
+                )
+            )["minimum"]
+
+        return value

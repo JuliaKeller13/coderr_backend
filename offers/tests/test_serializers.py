@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from rest_framework.test import APIRequestFactory
 
-from offers.api.serializers import OfferSerializer
+from offers.api.serializers import OfferWriteSerializer
 from offers.models import Offer, OfferDetail
 from users.models import Profile
 
@@ -73,7 +73,7 @@ class OfferSerializerTests(TestCase):
         request = self.factory.post("/api/offers/")
         request.user = self.user
 
-        serializer = OfferSerializer(
+        serializer = OfferWriteSerializer(
             data=data,
             context={"request": request},
         )
@@ -117,7 +117,7 @@ class OfferSerializerTests(TestCase):
         request = self.factory.post("/api/offers/")
         request.user = self.user
 
-        serializer = OfferSerializer(
+        serializer = OfferWriteSerializer(
             data=data,
             context={"request": request},
         )
@@ -161,7 +161,7 @@ class OfferSerializerTests(TestCase):
         request = self.factory.post("/api/offers/")
         request.user = self.user
 
-        serializer = OfferSerializer(
+        serializer = OfferWriteSerializer(
             data=data,
             context={"request": request},
         )
