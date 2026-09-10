@@ -1,5 +1,5 @@
 """
-WSGI config for coder project.
+WSGI config for coderr project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
