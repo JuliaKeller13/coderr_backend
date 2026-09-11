@@ -24,6 +24,7 @@ class OfferDetailRetrieveView(
 ):
     queryset = OfferDetail.objects.all()
     serializer_class = OfferDetailSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class OfferListCreateView(generics.ListCreateAPIView):

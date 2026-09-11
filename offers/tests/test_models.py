@@ -30,7 +30,10 @@ class OfferModelTests(TestCase):
         )
 
         self.assertEqual(offer.user, self.user)
-        self.assertEqual(offer.title, "Grafikdesign-Paket")
+        self.assertEqual(
+            offer.title,
+            "Grafikdesign-Paket",
+        )
         self.assertEqual(
             offer.description,
             "Professionelles Grafikdesign",
@@ -48,7 +51,7 @@ class OfferModelTests(TestCase):
             title="Basic Design",
             revisions=2,
             delivery_time_in_days=5,
-            price=100,
+            price="100.00",
             features=[
                 "Logo Design",
                 "Visitenkarte",
@@ -57,5 +60,11 @@ class OfferModelTests(TestCase):
         )
 
         self.assertEqual(detail.offer, offer)
-        self.assertEqual(detail.offer_type, "basic")
-        self.assertEqual(offer.details.count(), 1)
+        self.assertEqual(
+            detail.offer_type,
+            OfferDetail.OfferType.BASIC,
+        )
+        self.assertEqual(
+            offer.details.count(),
+            1,
+        )
