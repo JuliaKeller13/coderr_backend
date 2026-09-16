@@ -1,12 +1,21 @@
 from django.db.models import Q
 
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAdminUser,
+)
 
 from orders.models import Order
 
-from .permissions import IsCustomerUser
-from .serializers import OrderSerializer
+from .permissions import (
+    IsCustomerUser,
+    IsOrderBusinessUser,
+)
+from .serializers import (
+    OrderSerializer,
+    OrderStatusUpdateSerializer,
+)
 
 
 class OrderListCreateView(
@@ -30,3 +39,27 @@ class OrderListCreateView(
             return [IsCustomerUser()]
 
         return [IsAuthenticated()]
+
+class OrderUpdateView(
+    generics.RetrieveUpdateDestroyAPIView
+):
+    queryset = Order.objects.all()
+    serializer_class = OrderStatusUpdateSerializer
+
+    http_method_names = [
+        "patch",
+        "delete",
+        "options",
+    ]
+
+    def get_permissions(self):
+        if self.request.method == "DELETE":
+            return [
+                IsAuthenticated(),
+                IsAdminUser(),
+            ]
+
+        return [
+            IsAuthenticated(),
+            IsOrderBusinessUser(),
+        ]
