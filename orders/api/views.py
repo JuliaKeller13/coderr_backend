@@ -1,12 +1,17 @@
+from django.contrib.auth import get_user_model
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 
 from rest_framework import generics
 from rest_framework.permissions import (
     IsAuthenticated,
     IsAdminUser,
 )
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from orders.models import Order
+from users.models import Profile
 
 from .permissions import (
     IsCustomerUser,
@@ -16,6 +21,9 @@ from .serializers import (
     OrderSerializer,
     OrderStatusUpdateSerializer,
 )
+
+
+User = get_user_model()
 
 
 class OrderListCreateView(
@@ -40,6 +48,7 @@ class OrderListCreateView(
 
         return [IsAuthenticated()]
 
+
 class OrderUpdateView(
     generics.RetrieveUpdateDestroyAPIView
 ):
@@ -63,3 +72,49 @@ class OrderUpdateView(
             IsAuthenticated(),
             IsOrderBusinessUser(),
         ]
+
+
+class OrderCountView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, business_user_id):
+        business_user = get_object_or_404(
+            User,
+            pk=business_user_id,
+            profile__type=Profile.UserType.BUSINESS,
+        )
+
+        order_count = Order.objects.filter(
+            business_user=business_user,
+            status=Order.Status.IN_PROGRESS,
+        ).count()
+
+        return Response(
+            {
+                "order_count": order_count,
+            }
+        )
+
+
+class CompletedOrderCountView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, business_user_id):
+        business_user = get_object_or_404(
+            User,
+            pk=business_user_id,
+            profile__type=Profile.UserType.BUSINESS,
+        )
+
+        completed_order_count = Order.objects.filter(
+            business_user=business_user,
+            status=Order.Status.COMPLETED,
+        ).count()
+
+        return Response(
+            {
+                "completed_order_count": (
+                    completed_order_count
+                ),
+            }
+        )
