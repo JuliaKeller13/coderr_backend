@@ -126,3 +126,72 @@ class OrderCreateTests(OrderAPITestBase):
             response.status_code,
             status.HTTP_404_NOT_FOUND,
         )
+
+    def test_business_user_cannot_create_order(self):
+        self.client.force_authenticate(
+            user=self.business_user
+        )
+
+        response = self.client.post(
+            "/api/orders/",
+            {
+                "offer_detail_id": self.offer_detail.id,
+            },
+            format="json",
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_403_FORBIDDEN,
+        )
+
+
+    def test_unauthenticated_user_cannot_create_order(self):
+        response = self.client.post(
+            "/api/orders/",
+            {
+                "offer_detail_id": self.offer_detail.id,
+            },
+            format="json",
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_401_UNAUTHORIZED,
+        )
+
+
+    def test_missing_offer_detail_id_returns_400(self):
+        self.client.force_authenticate(
+            user=self.customer_user
+        )
+
+        response = self.client.post(
+            "/api/orders/",
+            {},
+            format="json",
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_400_BAD_REQUEST,
+        )
+
+
+    def test_unknown_offer_detail_returns_404(self):
+        self.client.force_authenticate(
+            user=self.customer_user
+        )
+
+        response = self.client.post(
+            "/api/orders/",
+            {
+                "offer_detail_id": 99999,
+            },
+            format="json",
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_404_NOT_FOUND,
+        )
