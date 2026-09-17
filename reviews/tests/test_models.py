@@ -53,6 +53,11 @@ class ReviewModelTests(TestCase):
             4,
         )
 
+        self.assertEqual(
+            str(review),
+            "customer -> business",
+        )
+
     def test_reviewer_can_only_review_business_once(self):
         Review.objects.create(
             business_user=self.business,

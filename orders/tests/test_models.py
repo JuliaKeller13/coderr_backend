@@ -54,3 +54,8 @@ class OrderModelTests(TestCase):
             order.status,
             Order.Status.IN_PROGRESS,
         )
+
+        self.assertEqual(
+            str(order),
+            "Logo Design - in_progress",
+        )

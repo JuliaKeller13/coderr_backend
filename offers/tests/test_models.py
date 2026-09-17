@@ -39,6 +39,11 @@ class OfferModelTests(TestCase):
             "Professionelles Grafikdesign",
         )
 
+        self.assertEqual(
+            str(offer),
+            "Grafikdesign-Paket",
+        )
+
     def test_offer_detail_is_linked_to_offer(self):
         offer = Offer.objects.create(
             user=self.user,
@@ -67,4 +72,9 @@ class OfferModelTests(TestCase):
         self.assertEqual(
             offer.details.count(),
             1,
+        )
+
+        self.assertEqual(
+            str(detail),
+            "Grafikdesign-Paket - basic",
         )
