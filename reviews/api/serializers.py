@@ -1,6 +1,8 @@
 from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied
 
 from reviews.models import Review
+from users.models import Profile
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -31,3 +33,28 @@ class ReviewSerializer(serializers.ModelSerializer):
             reviewer=reviewer,
             **validated_data,
         )
+
+    def validate_business_user(self, business_user):
+        if (
+            business_user.profile.type
+            != Profile.UserType.BUSINESS
+        ):
+            raise serializers.ValidationError(
+                "Reviews can only be created for business users."
+            )
+
+        return business_user
+
+    def validate(self, attrs):
+        reviewer = self.context["request"].user
+        business_user = attrs.get("business_user")
+
+        if Review.objects.filter(
+            reviewer=reviewer,
+            business_user=business_user,
+        ).exists():
+            raise PermissionDenied(
+                "You have already reviewed this business user."
+            )
+
+        return attrs
