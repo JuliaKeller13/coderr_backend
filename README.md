@@ -143,20 +143,20 @@ Password: asdasd24
 
 ```text
 coderr_backend/
-├── coderr/
 ├── core/
+├── base_info_app/
 │   ├── api/
 │   └── tests/
-├── offers/
+├── users_app/
 │   ├── api/
 │   └── tests/
-├── orders/
+├── offers_app/
 │   ├── api/
 │   └── tests/
-├── reviews/
+├── orders_app/
 │   ├── api/
 │   └── tests/
-├── users/
+├── reviews_app/
 │   ├── api/
 │   └── tests/
 ├── manage.py
@@ -169,20 +169,20 @@ coderr_backend/
 Run all tests:
 
 ```bash
-python manage.py test --settings=coderr.settings_test
+python manage.py test --settings=core.settings_test
 ```
 
 For faster repeated test runs:
 
 ```bash
-python manage.py test --keepdb --settings=coderr.settings_test
+python manage.py test --keepdb --settings=core.settings_test
 ```
 
 Run test coverage:
 
 ```bash
 python -m coverage erase
-python -m coverage run manage.py test --settings=coderr.settings_test
+python -m coverage run manage.py test --settings=core.settings_test
 python -m coverage report -m
 ```
 
