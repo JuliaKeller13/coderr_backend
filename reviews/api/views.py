@@ -1,6 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import OrderingFilter
 from rest_framework import generics
+from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
 
 from reviews.models import Review
@@ -21,14 +21,11 @@ class ReviewListCreateView(
 ):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-
     filter_backends = [
         DjangoFilterBackend,
         OrderingFilter,
     ]
-
     filterset_class = ReviewFilter
-
     ordering_fields = [
         "updated_at",
         "rating",
@@ -46,12 +43,10 @@ class ReviewDetailView(
 ):
     queryset = Review.objects.all()
     serializer_class = ReviewUpdateSerializer
-
     permission_classes = [
         IsAuthenticated,
         IsReviewOwner,
     ]
-
     http_method_names = [
         "patch",
         "delete",

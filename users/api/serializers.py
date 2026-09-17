@@ -1,9 +1,12 @@
 from django.contrib.auth import authenticate, get_user_model
+
 from rest_framework import serializers
 
 from users.models import Profile
 
+
 User = get_user_model()
+
 
 class RegistrationSerializer(serializers.ModelSerializer):
     repeated_password = serializers.CharField(write_only=True)
@@ -29,7 +32,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
         if attrs["password"] != attrs["repeated_password"]:
             raise serializers.ValidationError(
                 {
-                    "repeated_password": "Passwords do not match."
+                    "repeated_password": (
+                        "Passwords do not match."
+                    )
                 }
             )
 
@@ -44,13 +49,16 @@ class RegistrationSerializer(serializers.ModelSerializer):
             password=password,
             **validated_data,
         )
+        self._create_profile(user, user_type)
+        return user
 
+    @staticmethod
+    def _create_profile(user, user_type):
         Profile.objects.create(
             user=user,
             type=user_type,
         )
 
-        return user   
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
@@ -70,8 +78,8 @@ class LoginSerializer(serializers.Serializer):
             )
 
         attrs["user"] = user
-
         return attrs
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
@@ -91,19 +99,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         required=False,
     )
 
-    def update(self, instance, validated_data):
-        user_data = validated_data.pop("user", {})
-
-        user = instance.user
-
-        for field, value in user_data.items():
-            setattr(user, field, value)
-
-        if user_data:
-            user.save(update_fields=list(user_data.keys()))
-
-        return super().update(instance, validated_data)
-
     class Meta:
         model = Profile
         fields = [
@@ -120,13 +115,31 @@ class ProfileSerializer(serializers.ModelSerializer):
             "email",
             "created_at",
         ]
-
         read_only_fields = [
             "user",
             "username",
             "type",
             "created_at",
         ]
+
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop("user", {})
+        self._update_user(instance.user, user_data)
+        return super().update(
+            instance,
+            validated_data,
+        )
+
+    @staticmethod
+    def _update_user(user, user_data):
+        for field, value in user_data.items():
+            setattr(user, field, value)
+
+        if user_data:
+            user.save(
+                update_fields=list(user_data.keys())
+            )
+
 
 class BusinessProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(

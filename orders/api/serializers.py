@@ -60,33 +60,32 @@ class OrderSerializer(serializers.ModelSerializer):
         offer_detail = validated_data.pop(
             "offer_detail_id"
         )
-
-        customer = self.context[
-            "request"
-        ].user
-
-        business = offer_detail.offer.user
-
-        return Order.objects.create(
-            customer_user=customer,
-            business_user=business,
-            title=offer_detail.title,
-            revisions=offer_detail.revisions,
-            delivery_time_in_days=(
-                offer_detail.delivery_time_in_days
-            ),
-            price=offer_detail.price,
-            features=offer_detail.features,
-            offer_type=offer_detail.offer_type,
+        customer = self.context["request"].user
+        order_data = self._get_order_data(
+            customer,
+            offer_detail,
         )
+        return Order.objects.create(**order_data)
+
+    @staticmethod
+    def _get_order_data(customer, offer_detail):
+        return {
+            "customer_user": customer,
+            "business_user": offer_detail.offer.user,
+            "title": offer_detail.title,
+            "revisions": offer_detail.revisions,
+            "delivery_time_in_days": offer_detail.delivery_time_in_days,
+            "price": offer_detail.price,
+            "features": offer_detail.features,
+            "offer_type": offer_detail.offer_type,
+        }
+
 
 class OrderStatusUpdateSerializer(
     serializers.ModelSerializer
 ):
-
     class Meta:
         model = Order
-
         fields = [
             "id",
             "customer_user",
@@ -117,17 +116,7 @@ class OrderStatusUpdateSerializer(
         ]
 
     def validate(self, attrs):
-        allowed_fields = {
-            "status",
-        }
-
-        submitted_fields = set(
-            self.initial_data.keys()
-        )
-
-        invalid_fields = (
-            submitted_fields - allowed_fields
-        )
+        invalid_fields = self._get_invalid_fields()
 
         if invalid_fields:
             raise serializers.ValidationError(
@@ -140,3 +129,8 @@ class OrderStatusUpdateSerializer(
             )
 
         return attrs
+
+    def _get_invalid_fields(self):
+        allowed_fields = {"status"}
+        submitted_fields = set(self.initial_data.keys())
+        return submitted_fields - allowed_fields

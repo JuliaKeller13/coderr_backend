@@ -59,9 +59,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 
         return attrs
 
-class ReviewUpdateSerializer(
-    serializers.ModelSerializer
-):
+
+class ReviewUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
@@ -84,18 +83,7 @@ class ReviewUpdateSerializer(
         ]
 
     def validate(self, attrs):
-        allowed_fields = {
-            "rating",
-            "description",
-        }
-
-        submitted_fields = set(
-            self.initial_data.keys()
-        )
-
-        invalid_fields = (
-            submitted_fields - allowed_fields
-        )
+        invalid_fields = self._get_invalid_fields()
 
         if invalid_fields:
             raise serializers.ValidationError(
@@ -108,3 +96,8 @@ class ReviewUpdateSerializer(
             )
 
         return attrs
+
+    def _get_invalid_fields(self):
+        allowed_fields = {"rating", "description"}
+        submitted_fields = set(self.initial_data.keys())
+        return submitted_fields - allowed_fields
