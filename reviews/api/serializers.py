@@ -58,3 +58,53 @@ class ReviewSerializer(serializers.ModelSerializer):
             )
 
         return attrs
+
+class ReviewUpdateSerializer(
+    serializers.ModelSerializer
+):
+
+    class Meta:
+        model = Review
+        fields = [
+            "id",
+            "business_user",
+            "reviewer",
+            "rating",
+            "description",
+            "created_at",
+            "updated_at",
+        ]
+
+        read_only_fields = [
+            "id",
+            "business_user",
+            "reviewer",
+            "created_at",
+            "updated_at",
+        ]
+
+    def validate(self, attrs):
+        allowed_fields = {
+            "rating",
+            "description",
+        }
+
+        submitted_fields = set(
+            self.initial_data.keys()
+        )
+
+        invalid_fields = (
+            submitted_fields - allowed_fields
+        )
+
+        if invalid_fields:
+            raise serializers.ValidationError(
+                {
+                    "detail": (
+                        "Only rating and description "
+                        "may be updated."
+                    )
+                }
+            )
+
+        return attrs

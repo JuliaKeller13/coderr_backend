@@ -6,8 +6,14 @@ from rest_framework.permissions import IsAuthenticated
 from reviews.models import Review
 
 from .filters import ReviewFilter
-from .permissions import IsCustomerUser
-from .serializers import ReviewSerializer
+from .permissions import (
+    IsCustomerUser,
+    IsReviewOwner,
+)
+from .serializers import (
+    ReviewSerializer,
+    ReviewUpdateSerializer,
+)
 
 
 class ReviewListCreateView(
@@ -33,3 +39,21 @@ class ReviewListCreateView(
             return [IsCustomerUser()]
 
         return [IsAuthenticated()]
+
+
+class ReviewDetailView(
+    generics.RetrieveUpdateDestroyAPIView
+):
+    queryset = Review.objects.all()
+    serializer_class = ReviewUpdateSerializer
+
+    permission_classes = [
+        IsAuthenticated,
+        IsReviewOwner,
+    ]
+
+    http_method_names = [
+        "patch",
+        "delete",
+        "options",
+    ]

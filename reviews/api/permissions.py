@@ -13,3 +13,14 @@ class IsCustomerUser(BasePermission):
             request.user.profile.type
             == Profile.UserType.CUSTOMER
         )
+
+
+class IsReviewOwner(BasePermission):
+
+    def has_object_permission(
+        self,
+        request,
+        view,
+        obj,
+    ):
+        return obj.reviewer == request.user
