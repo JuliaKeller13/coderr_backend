@@ -189,3 +189,18 @@ class ReviewDetailTests(ReviewAPITestBase):
             response.status_code,
             status.HTTP_404_NOT_FOUND,
         )
+
+    def test_rating_update_must_be_between_one_and_five(self):
+        review = self.create_review()
+        self.client.force_authenticate(user=self.customer_user)
+
+        for rating in (0, 6):
+            response = self.client.patch(
+                f"/api/reviews/{review.id}/",
+                {"rating": rating},
+                format="json",
+            )
+            self.assertEqual(
+                response.status_code,
+                status.HTTP_400_BAD_REQUEST,
+            )

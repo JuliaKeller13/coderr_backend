@@ -145,3 +145,24 @@ class ReviewCreateTests(ReviewAPITestBase):
             response.status_code,
             status.HTTP_400_BAD_REQUEST,
         )
+
+    def test_rating_must_be_between_one_and_five(self):
+        self.client.force_authenticate(
+            user=self.customer_user
+        )
+
+        for rating in (0, 6):
+            response = self.client.post(
+                "/api/reviews/",
+                {
+                    "business_user": self.business_user.id,
+                    "rating": rating,
+                    "description": "Invalid rating",
+                },
+                format="json",
+            )
+
+            self.assertEqual(
+                response.status_code,
+                status.HTTP_400_BAD_REQUEST,
+            )
