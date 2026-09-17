@@ -1,6 +1,5 @@
 from django.db.models import Min
 from django.urls import reverse
-
 from rest_framework import serializers
 
 from offers.models import Offer, OfferDetail

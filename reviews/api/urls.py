@@ -5,7 +5,6 @@ from .views import (
     ReviewListCreateView,
 )
 
-
 urlpatterns = [
     path(
         "reviews/",

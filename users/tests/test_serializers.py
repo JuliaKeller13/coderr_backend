@@ -4,7 +4,6 @@ from django.test import TestCase
 from users.api.serializers import ProfileSerializer, RegistrationSerializer
 from users.models import Profile
 
-
 User = get_user_model()
 
 

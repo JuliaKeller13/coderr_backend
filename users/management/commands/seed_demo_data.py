@@ -3,7 +3,6 @@ from django.core.management.base import BaseCommand
 
 from users.models import Profile
 
-
 User = get_user_model()
 
 DEMO_USERS = [

@@ -3,7 +3,6 @@ from django.test import TestCase
 
 from orders.models import Order
 
-
 User = get_user_model()
 
 

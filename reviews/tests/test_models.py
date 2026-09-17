@@ -5,7 +5,6 @@ from django.test import TestCase
 from reviews.models import Review
 from users.models import Profile
 
-
 User = get_user_model()
 
 

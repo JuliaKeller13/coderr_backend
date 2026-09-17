@@ -28,10 +28,10 @@ class OfferFilterTests(OfferAPITestBase):
         )
 
         response = self.client.get(
-            (
+
                 "/api/offers/"
                 f"?creator_id={self.business_user.id}"
-            )
+
         )
 
         self.assertEqual(

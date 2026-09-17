@@ -6,7 +6,6 @@ from .views import (
     OfferRetrieveUpdateDestroyView,
 )
 
-
 urlpatterns = [
     path(
         "offers/",

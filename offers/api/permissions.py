@@ -1,6 +1,6 @@
 from rest_framework.permissions import (
-    BasePermission,
     SAFE_METHODS,
+    BasePermission,
 )
 
 from users.models import Profile

@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-
 from rest_framework import serializers
 
 from offers.api.serializers import (
@@ -9,7 +8,6 @@ from offers.api.serializers import (
 )
 from offers.models import Offer, OfferDetail
 from users.models import Profile
-
 
 User = get_user_model()
 

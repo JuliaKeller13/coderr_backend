@@ -67,10 +67,10 @@ class ReviewListTests(ReviewAPITestBase):
         )
 
         response = self.client.get(
-            (
+
                 "/api/reviews/"
                 f"?business_user_id={self.business_user.id}"
-            )
+
         )
 
         self.assertEqual(
@@ -103,10 +103,10 @@ class ReviewListTests(ReviewAPITestBase):
         )
 
         response = self.client.get(
-            (
+
                 "/api/reviews/"
                 f"?reviewer_id={self.customer_user.id}"
-            )
+
         )
 
         self.assertEqual(

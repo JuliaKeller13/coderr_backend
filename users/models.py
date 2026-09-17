@@ -17,7 +17,7 @@ class Profile(models.Model):
         max_length=10,
         choices=UserType.choices,
     )
-    
+
     file = models.FileField(
         upload_to="profile_pictures/",
         blank=True,

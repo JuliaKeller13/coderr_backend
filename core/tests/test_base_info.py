@@ -1,12 +1,10 @@
 from django.contrib.auth import get_user_model
-
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from offers.models import Offer
 from reviews.models import Review
 from users.models import Profile
-
 
 User = get_user_model()
 

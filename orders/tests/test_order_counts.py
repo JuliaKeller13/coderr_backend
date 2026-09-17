@@ -64,10 +64,10 @@ class OrderCountTests(OrderAPITestBase):
         )
 
         response = self.client.get(
-            (
+
                 "/api/completed-order-count/"
                 f"{self.business_user.id}/"
-            )
+
         )
 
         self.assertEqual(
@@ -115,10 +115,10 @@ class OrderCountTests(OrderAPITestBase):
 
     def test_completed_order_count_requires_authentication(self):
         response = self.client.get(
-            (
+
                 "/api/completed-order-count/"
                 f"{self.business_user.id}/"
-            )
+
         )
 
         self.assertEqual(

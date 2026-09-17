@@ -5,7 +5,6 @@ from orders.models import Order
 
 from .base import OrderAPITestBase
 
-
 User = get_user_model()
 
 

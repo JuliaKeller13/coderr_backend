@@ -7,7 +7,6 @@ from .views import (
     OrderUpdateView,
 )
 
-
 urlpatterns = [
     path(
         "orders/",

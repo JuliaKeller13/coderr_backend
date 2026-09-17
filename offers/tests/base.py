@@ -5,7 +5,6 @@ from rest_framework.test import APITestCase
 
 from users.models import Profile
 
-
 User = get_user_model()
 
 
