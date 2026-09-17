@@ -30,3 +30,36 @@ class ReviewAPITestBase(APITestCase):
             user=self.business_user,
             type=Profile.UserType.BUSINESS,
         )
+
+    def create_customer_user(
+        self,
+        username="othercustomer",
+    ):
+        user = User.objects.create_user(
+            username=username,
+            password="testpassword",
+        )
+
+        Profile.objects.create(
+            user=user,
+            type=Profile.UserType.CUSTOMER,
+        )
+
+        return user
+
+
+    def create_business_user(
+        self,
+        username="otherbusiness",
+    ):
+        user = User.objects.create_user(
+            username=username,
+            password="testpassword",
+        )
+
+        Profile.objects.create(
+            user=user,
+            type=Profile.UserType.BUSINESS,
+        )
+
+        return user
