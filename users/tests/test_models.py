@@ -42,3 +42,15 @@ class ProfileModelTests(TestCase):
         self.assertEqual(profile.description, "")
         self.assertEqual(profile.working_hours, "")
         self.assertIsNotNone(profile.created_at)
+
+    def test_profile_string_representation(self):
+        user = User.objects.create_user(
+            username="julia",
+            password="testpassword",
+        )
+        profile = Profile.objects.create(
+            user=user,
+            type=Profile.UserType.BUSINESS,
+        )
+
+        self.assertEqual(str(profile), "julia - business")
