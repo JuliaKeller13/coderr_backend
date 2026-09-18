@@ -6,9 +6,12 @@
   width="180"
 />
 
-# Coderr Backend
+<h1>Coderr Backend</h1>
 
-REST API for a service marketplace built with Django and Django REST Framework.
+<p>
+  REST API for a service marketplace,<br>
+  built with Django and Django REST Framework.
+</p>
 
 <p>
   <img src="https://img.shields.io/badge/Python-3.14-3776AB?logo=python&logoColor=white" alt="Python">
@@ -17,133 +20,203 @@ REST API for a service marketplace built with Django and Django REST Framework.
   <img src="https://img.shields.io/badge/Coverage-100%25-success" alt="Coverage">
 </p>
 
+<p>
+  <a href="https://github.com/JuliaKeller13/Coderr_frontend">
+    <strong>Frontend Repository</strong>
+  </a>
+  &nbsp;•&nbsp;
+  <a href="https://github.com/Developer-Akademie-Backendkurs/project.Coderr">
+    Developer Akademie Project
+  </a>
+</p>
+
 </div>
 
-## About
+<hr>
 
-Coderr is a service marketplace where customers can browse offers, place orders and review business users.
+<h2>About</h2>
 
-Business users can create service offers and manage incoming orders.
+<p>
+  <strong>Coderr</strong> is a service marketplace where customers can browse
+  offers, place orders and review business users.
+</p>
 
-This repository contains my backend implementation created as part of the Developer Akademie Backend curriculum. The frontend was provided separately.
+<p>
+  This repository contains my backend implementation created as part of the
+  <strong>Developer Akademie Backend curriculum</strong>.
+</p>
 
-## Quickstart / Setup
+<p>
+  Business users can create service offers and manage incoming orders.
+  The REST API provides authentication, profiles, offers, orders, reviews
+  and marketplace statistics.
+</p>
 
-### Prerequisites
+<blockquote>
+  The frontend was originally provided by Developer Akademie.
+  I forked and adapted it for integration with this backend.
+</blockquote>
 
-- Python 3.14
-- Git
+<h2>API Overview</h2>
 
-### 1. Clone the repository
+<table>
+  <tr>
+    <th>Method</th>
+    <th>Endpoint</th>
+    <th>Resource</th>
+  </tr>
+  <tr>
+    <td>POST</td>
+    <td><code>/api/registration/</code></td>
+    <td>Registration</td>
+  </tr>
+  <tr>
+    <td>POST</td>
+    <td><code>/api/login/</code></td>
+    <td>Login</td>
+  </tr>
+  <tr>
+    <td>GET / PATCH</td>
+    <td><code>/api/profile/{user_id}/</code></td>
+    <td>Profile</td>
+  </tr>
+  <tr>
+    <td>GET / POST</td>
+    <td><code>/api/offers/</code></td>
+    <td>Offers</td>
+  </tr>
+  <tr>
+    <td>GET / PATCH / DELETE</td>
+    <td><code>/api/offers/{offer_id}/</code></td>
+    <td>Offer detail</td>
+  </tr>
+  <tr>
+    <td>GET / POST</td>
+    <td><code>/api/orders/</code></td>
+    <td>Orders</td>
+  </tr>
+  <tr>
+    <td>GET / POST</td>
+    <td><code>/api/reviews/</code></td>
+    <td>Reviews</td>
+  </tr>
+  <tr>
+    <td>GET</td>
+    <td><code>/api/base-info/</code></td>
+    <td>Marketplace statistics</td>
+  </tr>
+</table>
 
-```bash
-git clone https://github.com/JuliaKeller13/coderr_backend.git
-cd coderr_backend
-```
+<h2>Authentication</h2>
 
-### 2. Create a virtual environment
+<p>
+  Protected endpoints use Django REST Framework Token Authentication.
+</p>
 
-```bash
-python -m venv .venv
-```
+<pre><code>Authorization: Token &lt;your-token&gt;</code></pre>
 
-Windows PowerShell:
+<h2>Setup</h2>
 
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
+<h3>1. Clone the repository</h3>
 
-macOS / Linux:
+<pre><code>git clone https://github.com/JuliaKeller13/coderr_backend.git
+cd coderr_backend</code></pre>
 
-```bash
-source .venv/bin/activate
-```
+<h3>2. Create and activate a virtual environment</h3>
 
-### 3. Install dependencies
+<h4>Windows PowerShell</h4>
 
-```bash
-python -m pip install -r requirements.txt
-```
+<pre><code>python -m venv .venv
+.\.venv\Scripts\Activate.ps1</code></pre>
 
-### 4. Create the environment file
+<h4>macOS / Linux</h4>
 
-Create a `.env` file in the project root:
+<pre><code>python3 -m venv .venv
+source .venv/bin/activate</code></pre>
 
-```env
-SECRET_KEY=your-secret-key
-```
+<h3>3. Install dependencies</h3>
 
-### 5. Apply migrations
+<pre><code>python -m pip install -r requirements.txt</code></pre>
 
-```bash
-python manage.py migrate
-```
+<h3>4. Configure the environment</h3>
 
-### 6. Create demo data
+<p>
+  Create a local <code>.env</code> file in the project root:
+</p>
 
-```bash
-python manage.py seed_demo_data
-```
+<pre><code>SECRET_KEY=your-generated-secret-key</code></pre>
 
-### 7. Start the server
+<blockquote>
+  <strong>Important:</strong>
+  Never commit the real <code>.env</code> file or a real
+  <code>SECRET_KEY</code>.
+</blockquote>
 
-```bash
-python manage.py runserver
-```
+<h3>5. Prepare the database</h3>
 
-The API is available at:
+<pre><code>python manage.py migrate</code></pre>
 
-```text
-http://127.0.0.1:8000/api/
-```
+<h3>6. Start the server</h3>
 
-## Usage
+<pre><code>python manage.py runserver</code></pre>
 
-The API uses Django REST Framework Token Authentication.
+<p>Backend:</p>
 
-After login or registration, protected requests require:
+<pre><code>http://127.0.0.1:8000/</code></pre>
 
-```text
-Authorization: Token <your-token>
-```
+<h2>Frontend</h2>
 
-Main API resources:
+<p>
+  My adapted frontend fork is available here:
+</p>
 
-| Resource | Endpoint |
-| --- | --- |
-| Registration | `/api/registration/` |
-| Login | `/api/login/` |
-| Profiles | `/api/profile/<user_id>/` |
-| Offers | `/api/offers/` |
-| Orders | `/api/orders/` |
-| Reviews | `/api/reviews/` |
-| Base information | `/api/base-info/` |
+<p>
+  <a href="https://github.com/JuliaKeller13/Coderr_frontend">
+    github.com/JuliaKeller13/Coderr_frontend
+  </a>
+</p>
 
-Demo accounts can be created with:
+<p>
+  For local development it connects to:
+</p>
 
-```bash
-python manage.py seed_demo_data
-```
+<pre><code>http://127.0.0.1:8000/api/</code></pre>
 
-Customer:
+<p>
+  The original frontend was provided by Developer Akademie:
+</p>
 
-```text
-Username: andrey
-Password: asdasd
-```
+<p>
+  <a href="https://github.com/Developer-Akademie-Backendkurs/project.Coderr">
+    github.com/Developer-Akademie-Backendkurs/project.Coderr
+  </a>
+</p>
 
-Business:
+<h2>Testing</h2>
 
-```text
-Username: kevin
-Password: asdasd24
-```
+<p>Run all tests:</p>
 
-## Project Structure
+<pre><code>python manage.py test --settings=core.settings_test</code></pre>
 
-```text
+<p>Run coverage:</p>
+
+<pre><code>python -m coverage erase
+python -m coverage run manage.py test --settings=core.settings_test
+python -m coverage report -m</code></pre>
+
+<div align="center">
+
+<img
+  src="https://img.shields.io/badge/Application%20Coverage-100%25-success"
+  alt="100 percent application coverage"
+/>
+
+</div>
+
+<h2>Project Structure</h2>
+
+<pre>
 coderr_backend/
-├── core/
 ├── base_info_app/
 │   ├── api/
 │   └── tests/
@@ -159,50 +232,57 @@ coderr_backend/
 ├── reviews_app/
 │   ├── api/
 │   └── tests/
+├── core/
 ├── manage.py
-├── requirements.txt
-└── README.md
-```
+└── requirements.txt
+</pre>
 
-## Tests
+<h2>Project Context</h2>
 
-Run all tests:
+<p>
+  Coderr was implemented as a learning project within the
+  <strong>Developer Akademie Backend curriculum</strong>.
+</p>
 
-```bash
-python manage.py test --settings=core.settings_test
-```
+<p>
+  The frontend was provided as the client application.
+  My main task was to design and implement the Django REST API according
+  to the project's backend requirements.
+</p>
 
-For faster repeated test runs:
+<h2>License</h2>
 
-```bash
-python manage.py test --keepdb --settings=core.settings_test
-```
+<p>
+  Components provided by Developer Akademie, including the original
+  Coderr frontend and associated assets, are subject to the
+  <strong>Developer Akademie Learning License (Non-commercial)</strong>.
+  See <a href="./LICENSE.md">LICENSE.md</a> for details.
+</p>
 
-Run test coverage:
+<p>
+  This repository is published for non-commercial learning and portfolio use.
+</p>
 
-```bash
-python -m coverage erase
-python -m coverage run manage.py test --settings=core.settings_test
-python -m coverage report -m
-```
+<hr>
 
-Current test coverage: **100%**
+<div align="center">
 
-## Notes
+<img
+  src="https://raw.githubusercontent.com/JuliaKeller13/Coderr_frontend/main/assets/logo/logo_coderr.svg"
+  alt="Coderr Logo"
+  width="90"
+/>
 
-- The SQLite database is not committed to the repository.
-- Environment variables are stored in `.env`.
-- Uploaded media files are excluded from version control.
-- The frontend is maintained in a separate repository.
+<h3>Julia Keller</h3>
 
-Frontend repository:
+<p>
+  <a href="https://github.com/JuliaKeller13">GitHub</a>
+  &nbsp;•&nbsp;
+  <a href="https://github.com/JuliaKeller13/Coderr_frontend">Frontend</a>
+</p>
 
-https://github.com/JuliaKeller13/Coderr_frontend
+<p>
+  Developed as part of the Developer Akademie GmbH advanced training program.
+</p>
 
-## Contributing
-
-This project was created as an educational portfolio project. Contributions are currently not actively requested.
-
-## License
-
-No license has been specified for this project.
+</div>
