@@ -156,13 +156,30 @@ source .venv/bin/activate</code></pre>
 
 <pre><code>python manage.py migrate</code></pre>
 
-<h3>6. Start the server</h3>
+<h3>6. Create a superuser</h3>
+
+<p>
+  Create an administrator account for access to the Django Admin interface:
+</p>
+
+<pre><code>python manage.py createsuperuser</code></pre>
+
+<p>
+  Follow the prompts to choose your own username, email address and password.
+  Superuser credentials are created locally and are not stored in this repository.
+</p>
+
+<h3>7. Start the server</h3>
 
 <pre><code>python manage.py runserver</code></pre>
 
 <p>Backend:</p>
 
 <pre><code>http://127.0.0.1:8000/</code></pre>
+
+<p>Django Admin:</p>
+
+<pre><code>http://127.0.0.1:8000/admin/</code></pre>
 
 <h2>Frontend</h2>
 
