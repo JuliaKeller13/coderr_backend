@@ -24,6 +24,21 @@ from .serializers import (
 User = get_user_model()
 
 
+def get_business_user(business_user_id):
+    return get_object_or_404(
+        User,
+        pk=business_user_id,
+        profile__type=Profile.UserType.BUSINESS,
+    )
+
+
+def count_business_orders(business_user, status):
+    return Order.objects.filter(
+        business_user=business_user,
+        status=status,
+    ).count()
+
+
 class OrderListCreateView(
     generics.ListCreateAPIView
 ):
@@ -76,43 +91,23 @@ class OrderCountView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, business_user_id):
-        business_user = get_object_or_404(
-            User,
-            pk=business_user_id,
-            profile__type=Profile.UserType.BUSINESS,
+        business_user = get_business_user(business_user_id)
+        order_count = count_business_orders(
+            business_user,
+            Order.Status.IN_PROGRESS,
         )
-
-        order_count = Order.objects.filter(
-            business_user=business_user,
-            status=Order.Status.IN_PROGRESS,
-        ).count()
-
-        return Response(
-            {
-                "order_count": order_count,
-            }
-        )
+        return Response({"order_count": order_count})
 
 
 class CompletedOrderCountView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, business_user_id):
-        business_user = get_object_or_404(
-            User,
-            pk=business_user_id,
-            profile__type=Profile.UserType.BUSINESS,
+        business_user = get_business_user(business_user_id)
+        completed_order_count = count_business_orders(
+            business_user,
+            Order.Status.COMPLETED,
         )
-
-        completed_order_count = Order.objects.filter(
-            business_user=business_user,
-            status=Order.Status.COMPLETED,
-        ).count()
-
         return Response(
-            {
-                "completed_order_count": (
-                    completed_order_count
-                ),
-            }
+            {"completed_order_count": completed_order_count}
         )
