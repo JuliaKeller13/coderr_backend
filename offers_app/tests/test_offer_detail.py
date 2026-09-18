@@ -237,6 +237,32 @@ class OfferDetailTests(OfferAPITestBase):
             status.HTTP_400_BAD_REQUEST,
         )
 
+    def test_patch_detail_without_offer_type_returns_400(self):
+        create_response = self.create_offer()
+        offer_id = create_response.data["id"]
+
+        response = self.client.patch(
+            f"/api/offers/{offer_id}/",
+            {
+                "details": [
+                    {
+                        "title": "Basic Design Updated",
+                        "revisions": 5,
+                        "delivery_time_in_days": 5,
+                        "price": "161.00",
+                        "features": ["Berry", "Hank"],
+                    }
+                ]
+            },
+            format="json",
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_400_BAD_REQUEST,
+        )
+        self.assertIn("details", response.data)
+
     def test_owner_can_delete_offer(self):
         create_response = self.create_offer()
         offer_id = create_response.data["id"]
