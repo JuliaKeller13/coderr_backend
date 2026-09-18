@@ -69,8 +69,17 @@ class OfferWriteSerializer(serializers.ModelSerializer):
         if self.instance is None:
             self._validate_detail_count(details)
             self._validate_detail_types(details)
+        else:
+            self._validate_update_detail_types(details)
 
         return details
+
+    @staticmethod
+    def _validate_update_detail_types(details):
+        if any("offer_type" not in detail for detail in details):
+            raise serializers.ValidationError(
+                "Each detail update must include offer_type."
+            )
 
     @staticmethod
     def _validate_detail_count(details):
